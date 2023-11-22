@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>mail</title>
+        <style>
+            html body {
+                width: 100%;
+            }
+            .main-container {
+                text-align: left;
+                padding: 20px;
+            }
+            .captcha {
+                color: black;
+                font-weight: bold;
+                font-size: 40px;
+            }
+            .main-container .text-aria {
+                width: 400px;
+            }
+            .main-container .tips {
+                text-align: left;
+                color: black;
+                font-weight: bold;
+                font-size: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="main-container">
+            <div class="text-aria">
+                <p>
+                    <span th:text="${emailParam.tips}">Login Verification</span><br/>
+                    <span>The verification code</span><br/>
+                    <span class="captcha" th:text="${emailParam.code}">0000</span><br/>
+                    <span>The verification code will be valid for 30 minutes. Please do not share this code with anyone.</span>
+                </p>
+                <p>This is an automated message, please do not reply.</p>
+                <p>Stay connected!</p>
+            </div>
+        </div>
+    </body>
+</html>

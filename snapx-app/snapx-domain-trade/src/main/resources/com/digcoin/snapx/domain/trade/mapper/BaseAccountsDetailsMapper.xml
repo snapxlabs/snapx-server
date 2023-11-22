@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.digcoin.snapx.domain.trade.mapper.BaseAccountsDetailsMapper">
+
+    <resultMap id="BaseAmountSumByDatetime" type="com.digcoin.snapx.domain.trade.bo.BaseAmountSumByDatetime">
+        <result column="member_id" property="memberId" />
+        <result column="amount" property="amount" />
+    </resultMap>
+
+    <resultMap id="BaseAccountRecentDayRanking" type="com.digcoin.snapx.domain.trade.bo.BaseAccountRecentDayRanking">
+        <result column="member_id" property="memberId" />
+        <result column="amount" property="amount" />
+        <result column="rank" property="rank" />
+    </resultMap>
+
+
+    <select id="getWalletAmountSum" resultType="java.lang.Long">
+        SELECT IFNULL(SUM(`amount`), 0) FROM `td_base_accounts_details`
+        <where>
+            <if test="p.memberId != null and p.memberId != ''">
+                AND `member_id` = #{p.memberId}
+            </if>
+            <if test="p.accountsType != null">
+                AND `accounts_type` = #{p.accountsType}
+            </if>
+            <if test="p.walletAccountsId != null and p.walletAccountsId != ''">
+                AND `wallet_accounts_id` = #{p.walletAccountsId}
+            </if>
+            <if test="p.subject != null and p.subject != ''">
+                AND `subject` = #{p.subject}
+            </if>
+            <if test="p.direction != null and p.direction != ''">
+                AND `direction` = #{p.direction}
+            </if>
+        </where>
+    </select>
+
+    <select id="getAmountSumByDatetime" resultMap="BaseAmountSumByDatetime">
+        SELECT a.`member_id`, d.`balance_after` as `amount` FROM `td_base_accounts_details` d
+        join `td_base_accounts` a on a.`id` = d.`wallet_accounts_id`
+        where d.`id` in (
+            SELECT max(d.`id`) FROM `td_base_accounts_details` d
+            join `td_base_accounts` a on a.`id` = d.`wallet_accounts_id`
+            <where>
+                <if test="p.memberIds != null and p.memberIds.size() > 0">
+                    AND a.`member_id` in
+                    <foreach collection="p.memberIds" item="value" separator="," open="(" close=")">
+                        #{value}
+                    </foreach>
+                </if>
+                <if test="p.accountsType != null">
+                    AND a.`accounts_type` = #{p.accountsType}
+                </if>
+                <if test="p.walletAccountsId != null and p.walletAccountsId != ''">
+                    AND d.`wallet_accounts_id` = #{p.walletAccountsId}
+                </if>
+                <if test="p.subject != null and p.subject != ''">
+                    AND d.`subject` = #{p.subject}
+                </if>
+                <if test="p.direction != null">
+                    AND d.`direction` = #{p.direction}
+                </if>
+                <if test="p.startTime != null and p.endTime != null">
+                    AND d.`create_time` &gt;= #{p.startTime} AND d.`create_time` &lt;= #{p.endTime}
+                </if>
+            </where>
+            group by a.`member_id`
+        );
+    </select>
+
+    <select id="getTotalAmountSum" resultType="java.lang.Long">
+        SELECT IFNULL(SUM(`balance`), 0) as `amount` FROM `td_base_accounts` a
+        <where>
+            <if test="p.accountsType != null">
+                AND a.`accounts_type` = #{p.accountsType}
+            </if>
+        </where>
+    </select>
+
+    <select id="pageRecentDayRanking" resultMap="BaseAccountRecentDayRanking">
+        select (@i:=@i+1) as `rank`, t.* from (
+            select m.id as member_id, ifnull(a.amount, 0) as amount
+            from mem_member m
+            left join (select member_id,
+                              sum(if(direction = 'DEBIT', amount, 0)) - sum(if(direction = 'CREDIT', amount, 0)) as amount
+                       from td_base_accounts_details
+                       where accounts_type = #{accountsType}
+                         and create_time &gt;= #{startTime}
+                         and deleted = 0
+                       group by member_id) as a on m.id = a.member_id,(select @i:=0) as b
+            order by a.amount desc
+        ) t
+        limit #{offset}, #{limit}
+    </select>
+
+</mapper>

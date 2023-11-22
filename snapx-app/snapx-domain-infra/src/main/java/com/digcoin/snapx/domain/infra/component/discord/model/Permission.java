@@ -1,0 +1,66 @@
+package com.digcoin.snapx.domain.infra.component.discord.model;
+
+public enum Permission {
+    CREATE_INSTANT_INVITE(1L),
+    KICK_MEMBERS(2L),
+    BAN_MEMBERS(4L),
+    ADMINISTRATOR(8L),
+    MANAGE_CHANNELS(16L),
+    MANAGE_GUILD(32L),
+    ADD_REACTIONS(64L),
+    VIEW_AUDIT_LOG(128L),
+    VIEW_CHANNEL(1024L),
+    SEND_MESSAGES(2048L),
+    SEND_TTS_MESSAGES(4096L),
+    MANAGE_MESSAGES(8192L),
+    EMBED_LINKS(16384L),
+    ATTACH_FILES(32768L),
+    READ_MESSAGE_HISTORY(65536L),
+    MENTION_EVERYONE(131072L),
+    USE_EXTERNAL_EMOJIS(262144L),
+    CONNECT(1048576L),
+    SPEAK(2097152L),
+    MUTE_MEMBERS(4194304L),
+    DEAFEN_MEMBERS(8388608L),
+    MOVE_MEMBERS(16777216L),
+    USE_VAD(33554432L),
+    PRIORITY_SPEAKER(256L),
+    STREAM(512L),
+    CHANGE_NICKNAME(67108864L),
+    MANAGE_NICKNAMES(134217728L),
+    MANAGE_ROLES(268435456L),
+    MANAGE_WEBHOOKS(536870912L),
+    /** @deprecated */
+    @Deprecated
+    MANAGE_EMOJIS(1073741824L),
+    MANAGE_EMOJIS_AND_STICKERS(1073741824L),
+    USE_APPLICATION_COMMANDS(-2147483648L),
+    REQUEST_TO_SPEAK(4294967296L),
+    MANAGE_EVENTS(8589934592L),
+    MANAGE_THREADS(17179869184L),
+    CREATE_PUBLIC_THREADS(34359738368L),
+    CREATE_PRIVATE_THREADS(68719476736L),
+    USE_EXTERNAL_STICKERS(137438953472L),
+    SEND_MESSAGES_IN_THREADS(274877906944L),
+    START_EMBEDDED_ACTIVITIES(549755813888L);
+
+    private final long value;
+
+    boolean isIn(long permissions) {
+        return (permissions & this.value) == this.value;
+    }
+
+    /** @deprecated */
+    @Deprecated
+    long value() {
+        return this.value;
+    }
+
+    Permission(long value) {
+        this.value = value;
+    }
+
+    public long getValue() {
+        return this.value;
+    }
+}

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.digcoin.snapx.domain.infra.mapper.GeoCountryMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.digcoin.snapx.domain.infra.entity.GeoCountry">
+        <id column="id" property="id" />
+        <result column="long_name" property="longName" />
+        <result column="short_name" property="shortName" />
+        <result column="long_name_zh_hk" property="longNameZhHk" />
+        <result column="short_name_zh_hk" property="shortNameZhHk" />
+        <result column="currency_code" property="currencyCode" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="create_by" property="createBy" />
+        <result column="update_by" property="updateBy" />
+        <result column="deleted" property="deleted" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, long_name, short_name, long_name_zh_hk, short_name_zh_hk, currency_code, create_time, update_time, create_by, update_by, deleted
+    </sql>
+
+</mapper>

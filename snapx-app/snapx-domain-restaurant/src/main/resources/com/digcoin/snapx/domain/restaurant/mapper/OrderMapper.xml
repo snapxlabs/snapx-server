@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.digcoin.snapx.domain.restaurant.mapper.OrderMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.digcoin.snapx.domain.restaurant.entity.Order">
+        <id column="id" property="id" />
+        <result column="country_id" property="countryId" />
+        <result column="locality_id" property="localityId" />
+        <result column="restaurant_id" property="restaurantId" />
+        <result column="member_id" property="memberId" />
+        <result column="status" property="status" />
+        <result column="photo_urls" property="photoUrls" />
+        <result column="rating" property="rating" />
+        <result column="spend" property="spend" />
+        <result column="currency_code" property="currencyCode" />
+        <result column="content" property="content" />
+        <result column="earned" property="earned" />
+        <result column="lng" property="lng" />
+        <result column="lat" property="lat" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="create_by" property="createBy" />
+        <result column="update_by" property="updateBy" />
+        <result column="deleted" property="deleted" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, country_id, locality_id, restaurant_id, member_id, status, photo_urls, rating, spend, currency_code, content, earned, lng, lat, create_time, update_time, create_by, update_by, deleted
+    </sql>
+
+</mapper>

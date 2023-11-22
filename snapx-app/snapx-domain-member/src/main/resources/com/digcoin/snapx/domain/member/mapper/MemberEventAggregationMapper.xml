@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.digcoin.snapx.domain.member.mapper.MemberEventAggregationMapper">
+
+    <resultMap id="MemberEventAggregation" type="com.digcoin.snapx.domain.member.entity.MemberEventAggregation">
+        <id property="id" column="id"/>
+        <result property="event" column="event"/>
+        <result property="time" column="time"/>
+        <result property="count" column="count"/>
+    </resultMap>
+
+    <select id="getEventSum" resultType="java.lang.Long">
+        select IFNULL(sum(`count`), 0) as `total` from `mem_member_event_aggregation`
+        <where>
+            and `event` = #{event}
+            <if test="startTime != null">
+                and `time` &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                and `time` &lt; #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <select id="pageEventPerMonth" resultType="java.lang.Long" resultMap="MemberEventAggregation">
+        SELECT DATE_FORMAT(`time`, '%Y-%m-01 00:00:00') as `time`, `event`, sum(`count`) as `count` FROM `mem_member_event_aggregation`
+        <where>
+            and `event` = #{event}
+            <if test="startTime != null">
+                and `time` &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                and `time` &lt; #{endTime}
+            </if>
+        </where>
+        GROUP BY DATE_FORMAT(`time`, '%Y-%m-01 00:00:00'), `event`
+        ORDER BY `time` DESC
+    </select>
+
+    <select id="pageEventPerDay" resultType="java.lang.Long" resultMap="MemberEventAggregation">
+        SELECT DATE_FORMAT(`time`, '%Y-%m-%d 00:00:00') as `time`, `event`, sum(`count`) as `count` FROM `mem_member_event_aggregation`
+        <where>
+            and `event` = #{event}
+            <if test="startTime != null">
+                and `time` &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                and `time` &lt; #{endTime}
+            </if>
+        </where>
+        GROUP BY DATE_FORMAT(`time`, '%Y-%m-%d 00:00:00'), `event`
+        ORDER BY `time` DESC
+    </select>
+
+    <select id="pageEventPerHour" resultType="java.lang.Long" resultMap="MemberEventAggregation">
+        SELECT DATE_FORMAT(`time`, '%Y-%m-%d %H:00:00') as `time`, `event`, sum(`count`) as `count` FROM `mem_member_event_aggregation`
+        <where>
+            and `event` = #{event}
+            <if test="startTime != null">
+                and `time` &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                and `time` &lt; #{endTime}
+            </if>
+        </where>
+        GROUP BY DATE_FORMAT(`time`, '%Y-%m-%d %H:00:00'), `event`
+        ORDER BY `time` DESC
+    </select>
+
+</mapper>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.digcoin.snapx.domain.member.mapper.MemberInvitationMapper">
+
+    <resultMap id="InviteeCountMap" type="com.digcoin.snapx.domain.member.bo.InviteeCountMap">
+        <result property="inviterMemberId" column="inviter_member_id"/>
+        <result property="inviteeCount" column="invitee_count"/>
+    </resultMap>
+
+    <select id="getInviteeCountMap" resultMap="InviteeCountMap">
+        SELECT `inviter_member_id`, count(*) as invitee_count FROM `mem_member_invitation`
+        <where>
+            AND `deleted` = 0
+            <if test="inviterMemberIds != null and inviterMemberIds.size() > 0">
+                AND `inviter_member_id` IN
+                <foreach collection="inviterMemberIds" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        group by `inviter_member_id`
+    </select>
+
+</mapper>

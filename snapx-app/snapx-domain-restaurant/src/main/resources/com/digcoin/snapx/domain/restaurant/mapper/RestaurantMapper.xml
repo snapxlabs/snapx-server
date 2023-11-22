@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.digcoin.snapx.domain.restaurant.mapper.RestaurantMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.digcoin.snapx.domain.restaurant.entity.Restaurant">
+        <id column="id" property="id" />
+        <result column="country_id" property="countryId" />
+        <result column="locality_id" property="localityId" />
+        <result column="name" property="name" />
+        <result column="name_zh_hk" property="nameZhHk" />
+        <result column="cover_url" property="coverUrl" />
+        <result column="avg_earned" property="avgEarned" />
+        <result column="avg_spent_usd" property="avgSpentUsd" />
+        <result column="avg_rating" property="avgRating" />
+        <result column="rating1_num" property="rating1Num" />
+        <result column="rating2_num" property="rating2Num" />
+        <result column="rating3_num" property="rating3Num" />
+        <result column="rating4_num" property="rating4Num" />
+        <result column="rating5_num" property="rating5Num" />
+        <result column="place_id" property="placeId" />
+        <result column="lng" property="lng" />
+        <result column="lat" property="lat" />
+        <result column="review_num" property="reviewNum" />
+        <result column="views" property="views" />
+        <result column="is_verified" property="verified" />
+        <result column="is_google" property="google" />
+        <result column="photo_reference" property="photoReference" />
+        <result column="photo_width" property="photoWidth" />
+        <result column="photo_height" property="photoHeight" />
+        <result column="is_spec" property="spec" />
+        <result column="is_watermark" property="watermark" />
+        <result column="watermark_bg_url" property="watermarkBgUrl" />
+        <result column="watermark_logo_url" property="watermarkLogoUrl" />
+        <result column="source" property="source" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="create_by" property="createBy" />
+        <result column="update_by" property="updateBy" />
+        <result column="deleted" property="deleted" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, country_id, locality_id, name, name_zh_hk, cover_url, avg_earned, avg_spent_usd, avg_rating, rating1_num, rating2_num, rating3_num, rating4_num, rating5_num, place_id, lng, lat, review_num, views, is_verified as verified, is_google as google, photo_reference, photo_width, photo_height, is_spec as spec, is_watermark as watermark, watermark_bg_url, watermark_logo_url, `source`, create_time, update_time, create_by, update_by, deleted
+    </sql>
+
+    <sql id="SoftDeleted_Where">
+        deleted = 0
+    </sql>
+
+    <sql id="Distance_Column">
+        `ROUND`(6371 * 2 * ASIN(SQRT(POWER(SIN((#{lat} - ABS(`lat`)) * PI() / 180 / 2), 2) +
+        COS(#{lat} * PI() / 180) * COS(ABS(`lat`) * PI() / 180) *
+        POWER(SIN((#{lng} - `lng`) * PI() / 180 / 2), 2))), 2) AS `distance`
+    </sql>
+
+    <sql id="Distance_Where">
+        `lat` BETWEEN #{lat} - (#{radius} / 111.045) AND #{lat} + (#{radius} / 111.045)
+        AND `lng` BETWEEN #{lng} - (#{radius} / (111.045 * COS(#{lat} * PI() / 180))) AND #{lng} + (#{radius} / (111.045 * COS(#{lat} * PI() / 180)))
+    </sql>
+
+    <update id="increaseViews">
+        UPDATE `rst_restaurant`
+        SET `views` = `views` + 1
+        WHERE <include refid="SoftDeleted_Where"></include> AND `id` = #{id}
+    </update>
+
+    <select id="listNearbyRestaurants" resultType="com.digcoin.snapx.domain.restaurant.bo.RestaurantBO">
+        SELECT <include refid="Base_Column_List"></include>,
+        <include refid="Distance_Column">
+            <property name="lat" value="#{lat}"/>
+            <property name="lng" value="#{lng}"/>
+        </include>
+        FROM `rst_restaurant`
+        WHERE
+        <include refid="SoftDeleted_Where"></include>
+        <if test="localityId != null">
+            AND `locality_id`  = #{localityId}
+        </if>
+        <if test="onlyInside != null and onlyInside">
+            AND `place_id`  = ''
+        </if>
+        <if test="keyword != null and !''.equals(keyword)">
+            AND (`name` LIKE concat('%', #{keyword}, '%') or `name_zh_hk` LIKE concat('%', #{keyword}, '%'))
+        </if>
+        <if test="(lat != null and lat != 0) and (lng != null and lng != 0) and (radius != null and radius > 0)">
+            AND
+            <include refid="Distance_Where">
+                <property name="lat" value="#{lat}"/>
+                <property name="lng" value="#{lng}"/>
+                <property name="radius" value="#{radius}"/>
+            </include>
+        </if>
+        HAVING `distance` <![CDATA[ <= ]]> #{radius}
+        ORDER BY `distance` ASC
+    </select>
+
+</mapper>

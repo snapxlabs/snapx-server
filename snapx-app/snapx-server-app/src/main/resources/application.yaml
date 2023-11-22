@@ -1,0 +1,112 @@
+server:
+  port: 9080
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${app.common.mysql.schema}?userSSL=false&serverTimezone=UTC&allowMultiQueries=true
+    username: ${app.common.mysql.username}
+    password: ${app.common.mysql.password}
+  redis:
+    host: ${app.common.redis.host}
+    port: ${app.common.redis.port}
+    database: ${app.common.redis.database}
+    password: ${app.common.redis.password}
+    connect-timeout: 1m
+    timeout: 15s
+    redisson:
+      config: |
+        singleServerConfig:
+          address: redis://${app.common.redis.host}:${app.common.redis.port}
+          database: ${app.common.redis.database}
+          password: ${app.common.redis.password}
+  web:
+    resources:
+      static-locations: classpath:/templates/
+springdoc:
+  writer-with-order-by-keys: true
+  defaultProducesMediaType: application/json
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  swagger-ui:
+    tagsSorter: alpha
+    disable-swagger-default-url: true
+    path: /swagger-ui.html
+    enabled: true
+sa-token:
+  token-style: simple-uuid
+  token-name: Authorization
+  token-prefix: Bearer
+  alone-redis:
+    host: ${app.sa-token.redis.host}
+    port: ${app.sa-token.redis.port}
+    database: 2
+    password: ${app.sa-token.redis.password}
+    connect-timeout: 1m
+    timeout: 15s
+app:
+  docs:
+    title: Snapx App API
+    description: Snapx App Service API
+    version: 0.0.1
+    app-name: Snapx App
+    app-url: https://snapx.digcoin.com/
+  resource-file:
+    strategy: ${app.vars.resource-file-storage-strategy}
+    resource-url: http://localhost:${server.port}
+    path: /resource-file
+    location: ${app.vars.file-location}
+    s3:
+      bucket: ${app.vars.s3.bucket}
+      cdn-domain: ${app.vars.s3.cdn-domain}
+  qrcode:
+    invite:
+      url: ${app.vars.invite.url}
+      width: ${app.vars.invite.width}
+      image-type: ${app.vars.invite.image-type}
+  member:
+    ex-pass:
+      accounts:
+        - 2199399291@qq.com
+      pass-code: '0000'
+  push:
+    schedule:
+      member:
+        target-hours: 12
+        target-week-day:
+          - MONDAY
+          - SATURDAY
+    aws:
+      platform-application-arn:
+        SNAPX_APP_IOS:
+          name: SNAPX_APP_IOS
+          push-channel: APNS
+          arn: ${app.vars.aws.sns.snaxp-app-ios.arn}
+        SNAPX_APP_ANDROID:
+          name: SNAPX_APP_ANDROID
+          push-channel: FCM
+          arn: ${app.vars.aws.sns.snaxp-app-android.arn}
+      topic:
+        global-notification: ${app.vars.aws.sns.topic.global.arn}
+  oauth:
+    discord:
+      client-id: 1104298514860744776
+      client-secret: hItkIGt95eqeSJQi-ysD7unlzYLyaLQY
+      redirect-uri: http://api.snapx.catfoodworks.com/app/member/oauth/discord/bind
+      scope:
+        - identify
+        - email
+        - guilds
+        - guilds.join
+      bot-token: MTEwNDI5ODUxNDg2MDc0NDc3Ng.GomVe1.uNidXbFim9p7Alfg-UL-vnAUGQZck2kfUv1gDg
+      official-guild-id: 1070262626761846874
+      result-uri: http://snapx.catfoodworks.com/#/ranking
+  vpn:
+    enabled: false
+    hostname: 127.0.0.1
+    port: 1080
+  exchange-rates-data-api:
+    api-key: L3yG9RYXETYc1XkyumCnkhHJ6LzybHRe
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

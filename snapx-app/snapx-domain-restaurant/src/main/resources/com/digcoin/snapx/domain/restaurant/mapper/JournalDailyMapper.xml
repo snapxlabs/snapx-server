@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.digcoin.snapx.domain.restaurant.mapper.JournalDailyMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.digcoin.snapx.domain.restaurant.entity.JournalDaily">
+        <id column="id" property="id" />
+        <result column="member_id" property="memberId" />
+        <result column="date" property="date" />
+        <result column="year" property="year" />
+        <result column="month" property="month" />
+        <result column="day" property="day" />
+        <result column="total_number" property="totalNumber" />
+        <result column="total_earned" property="totalEarned" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="create_by" property="createBy" />
+        <result column="update_by" property="updateBy" />
+        <result column="deleted" property="deleted" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, member_id, date, year, month, day, total_number, total_earned, create_time, update_time, create_by, update_by, deleted
+    </sql>
+
+</mapper>
